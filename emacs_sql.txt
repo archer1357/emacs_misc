@@ -1,0 +1,56 @@
+
+(defun sql-connect ()
+  (interactive)
+  (setq
+   sql-product
+   (intern
+    (read-string
+     (format "product (%s):" sql-product)
+     nil nil (symbol-name sql-product)))
+   sql-server
+   (read-string
+    (format"server (%s):" sql-server)
+    nil nil sql-server)
+   sql-port
+   (string-to-number
+    (read-string
+     (format "port (%i):" sql-port)
+     nil nil (number-to-string sql-port)))
+   sql-user
+   (read-string
+    (format "user (%s):" sql-user)
+    nil nil sql-user)
+   sql-password
+   (read-string
+    (format "pw (%s):" sql-password)
+    nil nil sql-password)
+   sql-database
+   (read-string
+    (format "db (%s):" sql-database)
+    nil nil sql-database))
+  (execute-kbd-macro
+   (vconcat [?\M-x] "sql-product-interactive")))
+
+(defun sql-kill ()
+  (interactive)
+  (kill-buffers "*SQL*"))
+
+(defun sql-hook ()
+  (local-set-key (kbd "<f5>")
+    'save-buffer 'sql-send-buffer)
+  (local-set-key (kbd "<f6>")
+    'save-buffer 'region-expand 'region-line 'sql-send-region)
+  (local-set-key (kbd "<f7>")
+    'sql-kill)
+  (local-set-key (kbd "<f9>")
+    'sql-connect 'other-window))
+
+(add-hook 'sql-mode-hook 'sql-hook)
+
+
+ '(sql-database "test")
+ '(sql-password "pass")
+ '(sql-port 3306)
+ '(sql-product (quote mysql))
+ '(sql-server "alarmpi")
+ '(sql-user "root")
